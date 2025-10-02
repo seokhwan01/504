@@ -54,15 +54,18 @@ set_initial_state()
 # ----------------------------
 # 상태 전환 함수
 # ----------------------------
-def emergency_mode(in_dir="", out_dir=""):
+def emergency_mode(in_dir="", out_dir="", turn=""):
     """응급차 진입시 상태 변경"""
     lcd.clear()
     lcd.cursor_pos = (0, 0)
     lcd.write_string(center_text("!!EMERGENCY!!"))
     if in_dir and out_dir:
-        direction_text = f"{in_dir} → {out_dir}"
+        direction_text = f"{in_dir} -> {out_dir}"
     else:
         direction_text = "UNKNOWN"
+    if turn:
+        direction_text += f" {turn}"
+        
     lcd.cursor_pos = (1, 0)
     lcd.write_string(center_text(direction_text))
     print(f"LCD: EMERGENCY {direction_text}")
@@ -109,7 +112,7 @@ def on_message(client, userdata, msg):
         print(f"[MQTT] event={event}, turn={turn_en}, explain={explain}")
 
         if event == "approach":
-            emergency_mode(in_dir_en, out_dir_en)
+            emergency_mode(in_dir_en, out_dir_en, turn_en)
         elif event == "passed":
             clear_mode()
 

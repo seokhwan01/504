@@ -47,9 +47,7 @@ set_light(traffic2, "g")
 current_state = "r"
 print("초기 상태: 신호등1 빨강 / 신호등2 초록")
 
-dir_map = {"북": "N", "남": "S", "동": "E", "서": "W",
-           "북동": "NE", "남동": "SE", "남서": "SW", "북서": "NW"}
-turn_map = {"직진": "Straight", "좌회전": "Left", "우회전": "Right", "유턴": "U-turn"}
+
 
 # ----------------------------
 # 메인 루프

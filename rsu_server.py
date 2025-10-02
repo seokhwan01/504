@@ -28,6 +28,10 @@ lcd = CharLCD(i2c_expander='PCF8574', address=0x27,
               cols=16, rows=2, auto_linebreaks=False)
 lcd.backlight_enabled = True
 
+dir_map = {"북": "N", "남": "S", "동": "E", "서": "W",
+           "북동": "NE", "남동": "SE", "남서": "SW", "북서": "NW"}
+turn_map = {"직진": "Straight", "좌회전": "Left", "우회전": "Right", "유턴": "U-turn"}
+
 # ----------------------------
 # 가운데 정렬 함수
 # ----------------------------
@@ -78,6 +82,7 @@ def clear_mode():
     lcd.write_string(center_text("CLEAR"))
     print("LCD: CLEAR (복귀)")
     set_initial_state()
+    
 
 # ----------------------------
 # MQTT 콜백
@@ -89,21 +94,28 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     try:
         data = json.loads(msg.payload.decode())
+
         event = data.get("event")      # approach / arrived / passed
         turn = data.get("turn")
         in_dir = data.get("in_dir")
         out_dir = data.get("out_dir")
         explain = data.get("explain")
 
-        print(f"[MQTT] event={event}, turn={turn}, explain={explain}")
+        # 영어 변환
+        in_dir_en  = dir_map.get(in_dir, in_dir)
+        out_dir_en = dir_map.get(out_dir, out_dir)
+        turn_en    = turn_map.get(turn, turn)
+
+        print(f"[MQTT] event={event}, turn={turn_en}, explain={explain}")
 
         if event == "approach":
-            emergency_mode(in_dir, out_dir)
+            emergency_mode(in_dir_en, out_dir_en)
         elif event == "passed":
             clear_mode()
 
     except Exception as e:
         print("메시지 처리 오류:", e)
+
 
 # ----------------------------
 # MQTT 클라이언트 설정

@@ -60,12 +60,12 @@ def emergency_mode(in_dir="", out_dir="", turn=""):
     lcd.cursor_pos = (0, 0)
     lcd.write_string(center_text("!!EMERGENCY!!"))
     if in_dir and out_dir:
-        direction_text = f"{in_dir} -> {out_dir}"
+        direction_text = f"{in_dir} to {out_dir}"
     else:
         direction_text = "UNKNOWN"
     if turn:
         direction_text += f" {turn}"
-        
+
     lcd.cursor_pos = (1, 0)
     lcd.write_string(center_text(direction_text))
     print(f"LCD: EMERGENCY {direction_text}")
@@ -81,9 +81,14 @@ def emergency_mode(in_dir="", out_dir="", turn=""):
 
 def clear_mode():
     """응급차 통과 후 원래 상태 복귀"""
-    lcd.clear()
-    lcd.write_string(center_text("CLEAR"))
-    print("LCD: CLEAR (복귀)")
+    try:
+        time.sleep(0.2)   # 약간의 대기
+        lcd.clear()
+        lcd.write_string(center_text("CLEAR"))
+        print("LCD: CLEAR (복귀)")
+    except Exception as e:
+        print("⚠️ LCD Clear Error:", e)
+
     set_initial_state()
     
 
